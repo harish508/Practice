@@ -1,0 +1,101 @@
+ public class Products
+    {
+       
+        public int Products_Id { get; set; }
+        public string Product_Name { get; set; }
+        public int Product_Price { get; set; }
+
+        public ICollection<Orders> Orders { get; set; }
+    }
+------------------------------------
+public class Orders
+    {
+        [Key]
+        public int Order_ID { get; set; }
+        public string Customer_Name { get; set; }
+        public DateTime Order_Date { get; set; }
+        public int Product_Id { get; set; }
+       public Products Products { get; set; }
+    }
+------------------------------------
+ public class Details : DbContext
+    {
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string connect = " Data Source=192.168.50.95;Initial Catalog=hbadugula;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+            optionsBuilder.UseSqlServer(connect);
+        }
+
+        public DbSet<Orders> Orders { get; set; }
+        public DbSet<Products> Products { get; set; }
+    }
+----------------------------------
+ public  class InsertToOrders
+    {
+        public void Insert()
+        {
+            try
+            {
+                using(var context=new Details())
+                {
+                    var order = new Orders();
+                    Console.WriteLine("Enter Order_Id");
+                    order.Order_ID =int.Parse(Console.ReadLine());
+                    Console.WriteLine("Enter Customer_Name");
+                    order.Customer_Name = Console.ReadLine();
+                    Console.WriteLine("Enter Order_Date");
+                    order.Order_Date = DateTime.Parse(Console.ReadLine());
+                    context.Orders.Add(order);
+                    context.SaveChanges();
+                    Console.WriteLine("Record insert Succes");
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine( "Error occured"+e.Message);
+            }
+        }
+    }
+------------------------------------------------
+ public  class InsertToProducts
+    {
+        public void Insert()
+        {
+            try
+            {
+                using(var context =new Details())
+                {
+                    var products = new Products();
+                    //Console.WriteLine("Enter Product_Id");
+                    //products.Products_Id = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Enter Product_Name");
+                    products.Product_Name = Console.ReadLine();
+                    Console.WriteLine("Enter Product_Price");
+                    products.Product_Price = int.Parse(Console.ReadLine());
+                    context.Products.Add(products);
+                    context.SaveChanges();
+                    Console.WriteLine("Record insert Succes");
+                }
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("Error"+e.Message);
+            }
+        }
+    }
+-------------------------------
+ class Program
+    {
+        static void Main(string[] args)
+        {
+            //InsertToOrders orders = new InsertToOrders();
+            //orders.Insert();
+            InsertToProducts products = new InsertToProducts();
+            products.Insert();
+        }
+    }
+------------------------------------
